@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build & Release outputs
+dist/
+build/
+release/
+packages/
+*.dmg
+*.exe
+*.app/
+*.icns.tmp/
+
+# TypeScript & Vite cache
+*.tsbuildinfo
+.vite/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary screenshots & debug logs
+chrome_shot.png
+test_shot.png
+shot_*.png
+verified_fixed_ui.png
+icon_preview_*.png
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

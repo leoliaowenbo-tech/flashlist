@@ -1,0 +1,17 @@
+{
+  "name": "闪念清单 · FlashList",
+  "short_name": "闪念清单",
+  "description": "极速闪念速记、智能标签与多端实时同步清单",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#3B82F6",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
