@@ -269,3 +269,30 @@
   border-top: 1px solid #e2e8f0;
 }
 
+/* iPhone PWA 独立应用安全区与视口高度适配 */
+.h-dvh-safe {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 防止 iOS Safari 点击输入框自动放大页面 */
+@media screen and (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+

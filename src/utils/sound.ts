@@ -169,7 +169,7 @@ class SoundEffectManager {
   private playFallbackAudio(): void {
     try {
       if (typeof Audio === 'undefined') return;
-      const audio = new Audio('/sounds/coin.wav');
+      const audio = new Audio(`${import.meta.env.BASE_URL}sounds/coin.wav`);
       audio.volume = this.volume;
       audio.play().catch(() => {});
     } catch {}

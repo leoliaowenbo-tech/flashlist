@@ -30,6 +30,7 @@ export interface TaskList {
   color: string;
   icon?: string;
   folderId?: string;
+  updatedAt?: string;
 }
 
 export type ViewCategory = 

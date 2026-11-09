@@ -69,6 +69,7 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
   // 反馈状态
   const [copied, setCopied] = useState<boolean>(false);
   const [copyToast, setCopyToast] = useState<string | null>(null);
+  const [activeMobileTab, setActiveMobileTab] = useState<'organize' | 'preview'>('preview');
 
   // 单条内联编辑
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -262,25 +263,25 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
       )}
 
       {/* 顶栏工具栏 */}
-      <div className="h-14 border-b border-slate-200/80 px-4 md:px-6 flex items-center justify-between shrink-0 bg-white shadow-2xs">
+      <div className="min-h-14 border-b border-slate-200/80 px-3 md:px-6 py-2 flex items-center justify-between flex-wrap gap-2 shrink-0 bg-white shadow-2xs">
         {/* 左侧：标题、日报/周报切换、日期切换 */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* 日报 / 周报 切换标签组 */}
           <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/80">
             <button
               type="button"
-              className="flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-white text-blue-600 shadow-xs"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-white text-blue-600 shadow-xs"
             >
               <SunMedium size={13} className="text-amber-500" />
-              <span>工作日报</span>
+              <span>日报</span>
             </button>
             <button
               type="button"
               onClick={onSwitchToWeekly}
-              className="flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
             >
               <FileText size={13} className="text-slate-400" />
-              <span>工作周报</span>
+              <span>周报</span>
             </button>
           </div>
 
@@ -296,7 +297,7 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
               <ChevronLeft size={15} />
             </button>
 
-            <span className="text-xs font-semibold text-slate-700 px-2 min-w-[130px] text-center">
+            <span className="text-xs font-semibold text-slate-700 px-1.5 min-w-[115px] text-center">
               {dateDisplay}
             </span>
 
@@ -315,17 +316,17 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
               onClick={() => setReportDate(new Date())}
               className="text-[11px] font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/70 px-2 py-1 rounded-md transition-colors"
             >
-              回到今天
+              今天
             </button>
           )}
         </div>
 
         {/* 右侧：转述、序号、编辑模式、一键复制、导出、返回 */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 flex-wrap">
           {/* 智能规范转述开关 */}
           <button
             onClick={handleToggleRephrase}
-            className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
+            className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg border transition-all ${
               enableRephrasing
                 ? 'bg-amber-50 text-amber-700 border-amber-300 font-medium shadow-2xs'
                 : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
@@ -339,7 +340,7 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
           {/* 1.2.3 自动序号开关 */}
           <button
             onClick={() => setWithNumbering(!withNumbering)}
-            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
+            className={`hidden sm:flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
               withNumbering
                 ? 'bg-blue-50 text-blue-700 border-blue-200 font-medium'
                 : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
@@ -350,7 +351,7 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
           </button>
 
           {/* 格式切换: 标准文本 / Markdown */}
-          <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+          <div className="hidden lg:flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
             <button
               onClick={() => setFormatStyle('standard')}
               className={`px-2 py-1 rounded-md transition-all font-medium ${
@@ -372,7 +373,7 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
           {/* 自由编辑模式切换 */}
           <button
             onClick={() => setIsDirectEditing(!isDirectEditing)}
-            className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
+            className={`flex items-center gap-1 text-xs px-2 py-1.5 rounded-lg border transition-all ${
               isDirectEditing
                 ? 'bg-purple-50 text-purple-700 border-purple-200 font-medium'
                 : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
@@ -385,20 +386,20 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
           {/* 一键复制 */}
           <button
             onClick={handleCopy}
-            className={`flex items-center gap-1.5 text-xs font-medium px-3.5 py-1.5 rounded-lg shadow-xs transition-all active:scale-95 ${
+            className={`flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg shadow-xs transition-all active:scale-95 ${
               copied
                 ? 'bg-emerald-600 text-white'
                 : 'bg-blue-600 hover:bg-blue-700 text-white'
             }`}
           >
             {copied ? <Check size={14} /> : <Copy size={14} />}
-            <span>{copied ? '已复制！' : '一键复制'}</span>
+            <span>{copied ? '已复制' : '复制日报'}</span>
           </button>
 
           {/* 下载文件 */}
           <button
             onClick={handleDownload}
-            className="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+            className="hidden sm:flex p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors"
             title="下载为文件"
           >
             <Download size={14} />
@@ -416,10 +417,36 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
         </div>
       </div>
 
-      {/* 主体工作区：左右双栏 */}
-      <div className="flex-1 flex overflow-hidden p-4 gap-4">
+      {/* 手机端专属 Tab 切换 */}
+      <div className="md:hidden flex border-b border-slate-200 bg-white shrink-0">
+        <button
+          onClick={() => setActiveMobileTab('preview')}
+          className={`flex-1 py-2 text-xs font-medium border-b-2 text-center transition-colors ${
+            activeMobileTab === 'preview'
+              ? 'border-blue-600 text-blue-600 font-semibold'
+              : 'border-transparent text-slate-500'
+          }`}
+        >
+          日报预览与复制
+        </button>
+        <button
+          onClick={() => setActiveMobileTab('organize')}
+          className={`flex-1 py-2 text-xs font-medium border-b-2 text-center transition-colors ${
+            activeMobileTab === 'organize'
+              ? 'border-blue-600 text-blue-600 font-semibold'
+              : 'border-transparent text-slate-500'
+          }`}
+        >
+          今日/明日条目整理 ({completedItems.length + plannedItems.length}项)
+        </button>
+      </div>
+
+      {/* 主体工作区：左右双栏（手机端按 Tab 切换） */}
+      <div className="flex-1 flex overflow-hidden p-3 md:p-4 gap-4 min-h-0">
         {/* 左栏：今日完成 与 明日预计 结构化任务列表 */}
-        <div className="w-1/2 flex flex-col gap-4 overflow-y-auto pr-1">
+        <div className={`w-full md:w-1/2 flex-col gap-4 overflow-y-auto pr-0.5 ${
+          activeMobileTab === 'organize' ? 'flex' : 'hidden md:flex'
+        }`}>
           {/* 卡片 1: 今日完成工作 */}
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 flex flex-col">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -687,7 +714,9 @@ export const DailyReportView: React.FC<DailyReportViewProps> = ({
         </div>
 
         {/* 右栏：实时预览与一键复制面板 */}
-        <div className="w-1/2 bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 flex flex-col">
+        <div className={`w-full md:w-1/2 bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 flex-col ${
+          activeMobileTab === 'preview' ? 'flex' : 'hidden md:flex'
+        }`}>
           <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
             <div className="flex items-center gap-2">
               <FileText size={16} className="text-blue-600" />

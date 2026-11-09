@@ -164,7 +164,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         />
       )}
 
-      <aside className={`bg-slate-100/95 border-r border-slate-200/80 flex flex-col h-full min-h-0 select-none text-slate-700 shrink-0 transition-all duration-200 z-40 ${
+      <aside className={`bg-slate-100/95 border-r border-slate-200/80 flex flex-col h-full min-h-0 pt-safe pb-safe md:pt-0 md:pb-0 select-none text-slate-700 shrink-0 transition-all duration-200 z-40 ${
         mobileOpen
           ? 'fixed inset-y-0 left-0 w-72 shadow-2xl md:relative md:w-64 md:shadow-none flex'
           : 'hidden md:flex w-64'
@@ -174,7 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="flex items-center justify-between mb-2 px-1">
             <div className="flex items-center gap-2">
               <img
-                src="/app-icon.png"
+                src={`${import.meta.env.BASE_URL}app-icon.png`}
                 alt="Logo"
                 className="w-7 h-7 rounded-lg shadow-xs object-cover border border-slate-200/50"
               />

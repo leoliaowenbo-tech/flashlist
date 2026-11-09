@@ -1,14 +1,25 @@
-export type SyncStatus = 'idle' | 'syncing' | 'connected' | 'error' | 'disconnected';
+export type SyncStatus = 'idle' | 'syncing' | 'connected' | 'error' | 'disconnected' | 'offline';
 
 export interface SyncConfig {
   supabaseUrl: string;
   supabaseAnonKey: string;
   enabled: boolean;
+  requireAuth?: boolean;
+  userEmail?: string | null;
   lastSyncedAt?: string | null;
+}
+
+export interface OutboxMutation {
+  id: string;
+  type: 'upsert_task' | 'delete_task' | 'upsert_list' | 'delete_list' | 'sync_tag_rules';
+  payload: any;
+  timestamp: string;
+  retryCount?: number;
 }
 
 export interface RemoteTask {
   id: string;
+  user_id?: string | null;
   title: string;
   description?: string;
   completed: boolean;
@@ -28,6 +39,7 @@ export interface RemoteTask {
 
 export interface RemoteTaskList {
   id: string;
+  user_id?: string | null;
   name: string;
   color: string;
   icon?: string | null;
@@ -38,6 +50,7 @@ export interface RemoteTaskList {
 
 export interface RemoteTagRule {
   tag: string;
+  user_id?: string | null;
   keywords: string[];
   enabled: boolean;
   updated_at: string;

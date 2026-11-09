@@ -131,6 +131,7 @@ export const TaskListSection: React.FC<TaskListProps> = ({
   const [collapsedWeeks, setCollapsedWeeks] = useState<Record<string, boolean>>({});
   const [showCompleted, setShowCompleted] = useState(false);
   const [useAutoClean, setUseAutoClean] = useState(true);
+  const [inputExpanded, setInputExpanded] = useState(false);
 
   // 右键快捷菜单与删除确认状态
   const [contextMenu, setContextMenu] = useState<{
@@ -251,6 +252,7 @@ export const TaskListSection: React.FC<TaskListProps> = ({
     setQuickPriority('p4');
     setQuickDueTime('');
     setQuickDueDate(format(new Date(), 'yyyy-MM-dd'));
+    setInputExpanded(false);
 
     if (andGoCalendar) {
       onSwitchToCalendar();
@@ -682,18 +684,19 @@ export const TaskListSection: React.FC<TaskListProps> = ({
       </div>
 
       {/* 快捷新建输入框（支持智能日期/时间识别 + 原生语音识别） */}
-      <div className="p-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
-        <div className={`bg-white border rounded-xl shadow-xs p-3 transition-all ${
+      <div className="p-2.5 md:p-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
+        <div className={`bg-white border rounded-xl shadow-xs p-2.5 md:p-3 transition-all ${
           isListening 
             ? 'ring-2 ring-red-500/30 border-red-500 bg-red-50/10' 
             : 'border-slate-200/90 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500'
         }`}>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <Plus size={18} className="text-blue-600 shrink-0" />
             <input
               type="text"
-              placeholder={isListening ? "正在倾听中，请说话... 如：“明天下午3点开会”" : "输入任务或点击右侧语音说话，智能自动识别日期时间..."}
+              placeholder={isListening ? "正在倾听中，请说话..." : "输入闪念待办，支持自动识别时间与标签..."}
               value={quickTitle}
+              onFocus={() => setInputExpanded(true)}
               onChange={(e) => setQuickTitle(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -701,8 +704,19 @@ export const TaskListSection: React.FC<TaskListProps> = ({
                   handleQuickAdd(false);
                 }
               }}
-              className="flex-1 text-sm bg-transparent outline-none placeholder:text-slate-400 text-slate-800"
+              className="flex-1 min-w-0 text-sm bg-transparent outline-none placeholder:text-slate-400 text-slate-800"
             />
+
+            {/* 手机端快捷发送按钮 */}
+            {quickTitle.trim() && (
+              <button
+                type="button"
+                onClick={() => handleQuickAdd(false)}
+                className="md:hidden px-2.5 py-1 bg-blue-600 text-white rounded-lg text-xs font-medium shrink-0"
+              >
+                添加
+              </button>
+            )}
 
             {/* 语音识别麦克风按钮 */}
             <button
@@ -711,10 +725,11 @@ export const TaskListSection: React.FC<TaskListProps> = ({
                 if (isListening) {
                   stopListening();
                 } else {
+                  setInputExpanded(true);
                   startListening();
                 }
               }}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`flex items-center gap-1 px-2 md:px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 ${
                 isListening
                   ? 'bg-red-500 text-white animate-pulse shadow-md ring-2 ring-red-300'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
@@ -724,12 +739,12 @@ export const TaskListSection: React.FC<TaskListProps> = ({
               {isListening ? (
                 <>
                   <MicOff size={14} className="animate-bounce" />
-                  <span>停止录音</span>
+                  <span className="hidden sm:inline">停止录音</span>
                 </>
               ) : (
                 <>
                   <Mic size={14} className="text-blue-600" />
-                  <span>语音输入</span>
+                  <span className="hidden sm:inline">语音输入</span>
                 </>
               )}
             </button>
@@ -782,7 +797,7 @@ export const TaskListSection: React.FC<TaskListProps> = ({
           )}
 
           {/* 快捷属性选择器 (日期、时间、优先级、清单) */}
-          <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100 flex-wrap gap-2">
+          <div className={`${inputExpanded || quickTitle.trim() ? 'flex' : 'hidden md:flex'} items-center justify-between mt-3 pt-2.5 border-t border-slate-100 flex-wrap gap-2`}>
             <div className="flex items-center gap-3 text-xs flex-wrap">
               {/* 日期选择 */}
               <div className="flex items-center gap-1 text-slate-500">

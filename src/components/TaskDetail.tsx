@@ -302,7 +302,7 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
 
   return (
     <>
-      <aside className="fixed inset-0 z-50 w-full md:relative md:w-[380px] md:z-auto border-l border-slate-200/80 bg-white flex flex-col h-full select-none shadow-xl md:shadow-xs shrink-0 overflow-hidden">
+      <aside className="fixed inset-0 z-50 w-full md:relative md:w-[380px] md:z-auto border-l border-slate-200/80 bg-white flex flex-col h-full pt-safe pb-safe select-none shadow-xl md:shadow-xs shrink-0 overflow-hidden">
         {/* 全局透明遮罩，用于点击外部关闭 Popover */}
         {openPopover && (
           <div 
@@ -476,12 +476,13 @@ export const TaskDetail: React.FC<TaskDetailProps> = ({
               <Pin size={15} className={task.pinned ? "fill-amber-500" : ""} />
             </button>
 
-            {/* 关闭详情 */}
+            {/* 关闭详情（手机端显示明显返回按钮） */}
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
+              className="px-2 py-1 md:p-1.5 text-slate-600 md:text-slate-400 hover:text-slate-800 bg-slate-100 md:bg-transparent hover:bg-slate-200/70 rounded-lg transition-colors flex items-center gap-1 text-xs font-medium"
               title="关闭详情"
             >
+              <span className="md:hidden">完成</span>
               <X size={16} />
             </button>
           </div>

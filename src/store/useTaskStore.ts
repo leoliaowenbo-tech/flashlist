@@ -84,6 +84,9 @@ export function useTaskStore() {
     syncManager.getStatus()
   );
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [pendingSyncCount, setPendingSyncCount] = useState<number>(() =>
+    syncManager.getPendingCount()
+  );
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(() => {
     return getSupabaseConfig().lastSyncedAt || null;
   });
@@ -163,29 +166,51 @@ export function useTaskStore() {
           prev.map((t) => (t.listId === listId ? { ...t, listId: 'inbox' } : t))
         );
       },
-      onStatusChange: (status: SyncStatus, errorMsg?: string) => {
+      onStatusChange: (status: SyncStatus, errorMsg?: string, pendingCount?: number) => {
         setSyncStatus(status);
         setSyncError(errorMsg || null);
+        if (typeof pendingCount === 'number') {
+          setPendingSyncCount(pendingCount);
+        }
         if (status === 'connected') {
           setLastSyncedAt(new Date().toISOString());
         }
       },
     });
 
-    const config = getSupabaseConfig();
-    if (config.enabled && config.supabaseUrl && config.supabaseAnonKey) {
-      syncManager.initRealtimeSubscription();
-      // 首次加载全量合并
-      syncManager
-        .performFullSync(tasksRef.current, listsRef.current)
-        .then(({ mergedTasks, mergedLists }) => {
-          setTasks(mergedTasks);
-          setLists(mergedLists);
-          setLastSyncedAt(new Date().toISOString());
-        });
-    } else {
-      setSyncStatus('disconnected');
-    }
+    const runAutoSync = () => {
+      const cfg = getSupabaseConfig();
+      if (cfg.enabled && cfg.supabaseUrl && cfg.supabaseAnonKey) {
+        syncManager.initRealtimeSubscription();
+        syncManager
+          .performFullSync(tasksRef.current, listsRef.current)
+          .then(({ mergedTasks, mergedLists }) => {
+            setTasks(mergedTasks);
+            setLists(mergedLists);
+            setLastSyncedAt(new Date().toISOString());
+          });
+      } else {
+        setSyncStatus('disconnected');
+      }
+    };
+
+    runAutoSync();
+
+    // 当手机从后台切回前台或网络恢复时，自动触发双向增量/全量同步
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        runAutoSync();
+      }
+    };
+    const handleOnline = () => {
+      runAutoSync();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('online', handleOnline);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('online', handleOnline);
+    };
   }, []);
 
   // 手动触发全量同步
@@ -306,7 +331,9 @@ export function useTaskStore() {
     };
 
     setTasks((prev) => [newTask, ...prev]);
-    setSelectedTaskId(newTask.id);
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      setSelectedTaskId(newTask.id);
+    }
 
     // 异步推送到云端
     syncManager.pushTask(newTask);
@@ -453,6 +480,7 @@ export function useTaskStore() {
       id: `list_${Date.now()}`,
       name,
       color,
+      updatedAt: new Date().toISOString(),
     };
     setLists((prev) => [...prev, newList]);
     syncManager.pushList(newList);
@@ -464,7 +492,7 @@ export function useTaskStore() {
     setLists((prev) =>
       prev.map((l) => {
         if (l.id === listId) {
-          const updated = { ...l, ...updates };
+          const updated = { ...l, ...updates, updatedAt: new Date().toISOString() };
           updatedListObj = updated;
           return updated;
         }
@@ -537,6 +565,7 @@ export function useTaskStore() {
     filteredTasks,
     syncStatus,
     syncError,
+    pendingSyncCount,
     lastSyncedAt,
     soundEnabled,
     toggleSound,

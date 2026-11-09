@@ -284,7 +284,7 @@ export const WeeklyReportView: React.FC<WeeklyReportViewProps> = ({
   return (
     <div className="flex-1 min-h-0 flex flex-col bg-slate-50 overflow-hidden text-slate-800">
       {/* 顶部操作与周控制栏 - 单行紧凑高适用性布局，严防爆框折行 */}
-      <header className="bg-white border-b border-slate-200 px-3 py-1.5 shrink-0 flex items-center justify-between gap-2 shadow-2xs">
+      <header className="bg-white border-b border-slate-200 px-3 py-1.5 shrink-0 flex items-center justify-between flex-wrap gap-2 shadow-2xs">
         {/* 左侧：标题、徽章与日报/周报切换 */}
         <div className="flex items-center gap-2 shrink-0">
           {onSwitchToDaily && (
